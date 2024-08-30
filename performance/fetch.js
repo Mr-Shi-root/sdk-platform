@@ -61,6 +61,6 @@ function overwriteFetch() {
     }
 }
 
-export default fetch() {
+export default function fetch() {
     overwriteFetch();
 }
