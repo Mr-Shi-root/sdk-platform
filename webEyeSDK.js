@@ -1,4 +1,5 @@
- window.__webEyeSDK__ = {
+import { lazyReportBatch } from "./report";
+window.__webEyeSDK__ = {
     version: '0.0.1',
  }
 
@@ -9,6 +10,7 @@
     const handler = Vue.config.errorHandler;
     Vue.config.errorHandler = function(err, vm, info) {
         // TODO 上报错误
+        lazyReportBatch(err) 
         if(handler) {
             handler(err, vm, info); 
         }
@@ -18,7 +20,8 @@
  function errorBoundary(err) {
     if (__webEyeSDK__.react) return;
     __webEyeSDK__.react = true;
-    // TODO 上报错误ee
+    // TODO 上报错误
+    lazyReportBatch(err) 
  }
 
  export default {

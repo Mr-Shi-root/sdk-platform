@@ -1,5 +1,5 @@
 import config from './config'
-
+import { addCache, clearCache, getCache } from './catch'
 // 一般token生成，hash生成的格式，是36进制
 // 0至9和A至Z
 // Math.random().toString(36).substring(2, 9)
@@ -17,11 +17,12 @@ export function report(data) {
         console.error('请设置上传 url 地址');
     }
 
-    const reporData = JSON.stringify({
+    const reportData = JSON.stringify({
         id: generateUniqueId(),
         data
     });
-    // TODO 发送数据 优先使用 secdBeacon，如果不兼容，再使用图片上传
+    // TODO 发送数据 优先使用 secdBeacon，如果不兼容，再使用图片上传4
+    lazyReportBatch(reportData) 
     const value = beaconRequest(config.url, reporData)
     if (!value) {
         // 上报数据，使用图片的方式
@@ -29,14 +30,31 @@ export function report(data) {
     }
 }
 
-// 发送图片数据 
+// 批量上传
+export function lazyReportBatch(data) {
+    // 缓存方法
+    addCache(data);
+    const data = getCache(data);
+    if (data?.length > config.batchSize) {
+        report(data);
+        clearCache();
+    }
+}
+
+/**
+ * 三种上报方式
+ * 发送图片数据 
+ * sendBeacon，如果不兼容，再使用图片上传
+ * 普通ajax发送请求数据
+ */
+
+
 export function imgRequest(data) {
     const img = new Image();
     img.src =  `${config.url}?data=${encodeURIComponent(JSON.stringify(data))}`;
 }
-// 发送图片数据 
+
 // 普通ajax发送请求数据
-// sendBeacon，如果不兼容，再使用图片上传
 export function xhrRequest(url, data) {
     if(window.requestIdleCallback){
         return flag = window.requestIdleCallback(()=>{
@@ -57,6 +75,7 @@ export function xhrRequest(url, data) {
     originalSend.call(xhr, JSON.stringify(data));
 }
 
+// sendBeacon
 export function isSupportSendBeacon(){
     return 'sendBeacon' in navigator;
 }
