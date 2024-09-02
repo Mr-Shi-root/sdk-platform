@@ -21,6 +21,8 @@
  * 3.用unhandledrejection 捕获promise的错误
  */
 
+import { lazyReportBatch } from "../report";
+
  export default function error() {
     // 捕获资源加载失败的错误： js css img
     window.addEventListener('error', function (event) {
@@ -51,6 +53,7 @@
             }
             console.log('reportData:',reportData);
             // TODO 发送数据
+            lazyReportBatch(reportData) 
         }
     }, true);
 
@@ -70,6 +73,7 @@
             stack: error.stack,
         }
         // TODO 发送错误信息
+        lazyReportBatch(reportData) 
         console.log('reportData:', reportData);
     }
 
@@ -84,6 +88,7 @@
             stack: event.reason.stack,
         }
         // TODO 发送错误信息
+        lazyReportBatch(reportData) 
         console.log('reportData:', reportData);
     });
 

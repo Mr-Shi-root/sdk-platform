@@ -11,6 +11,9 @@
 // 3.在xhr的send发送请求中，监听loadend函数，在请求完成前后，获取时间差（请求时间）状态
 // 3-1. 一定要记得remove监听事件，养成好的性能习惯
 // 4.上报数据
+
+import { lazyReportBatch } from "../report";
+
 export const originalProto = XMLHttpRequest.prototype;
 export const originalSend = originalProto.send;
 export const originalOpen = originalProto.open;
@@ -41,6 +44,7 @@ function overwriteOpenAndSend() {
             console.log(reportData);
 
             // TODO 发送数据
+            lazyReportBatch(reportData) 
 
             this.removeEventListener('loadend', onLoaded, true);
         }

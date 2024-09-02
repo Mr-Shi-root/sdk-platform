@@ -1,3 +1,5 @@
+import { lazyReportBatch } from "../report";
+
 // fetch 请求时长
 const originalFetch = window.fetch();
 
@@ -48,6 +50,7 @@ function overwriteFetch() {
             reportData.status = res.status;
             reportData.success = res.ok;
             // TODO 上报数据
+            lazyReportBatch(reportData) 
 
             return res;
         }).catch((err) => {
@@ -57,6 +60,7 @@ function overwriteFetch() {
             reportData.status = 0;
             reportData.success = false;
             // TODO 上报数据
+            lazyReportBatch(reportData) 
         })
     }
 }

@@ -5,7 +5,7 @@
 //     console.log(entry.name, entry.startTime, entry.duration);
 //   }
 // }
-
+import { lazyReportBatch } from "../report";
 // 2.上报的api
 function entryHandle(entries) {
     console.log('entries:',entries);
@@ -20,7 +20,7 @@ function entryHandle(entries) {
         console.log('element:', entry.element);
         
         // 需要上报的参数
-        const reporData = {
+        const reportData = {
             ...json,
             type: 'performance',
             subType: entry.name,
@@ -28,6 +28,7 @@ function entryHandle(entries) {
         }
 
         // 发送数据 todo
+        lazyReportBatch(reportData) 
     }
 }
 
