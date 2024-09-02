@@ -38,7 +38,6 @@ export function imgRequest(data) {
 // 普通ajax发送请求数据
 // sendBeacon，如果不兼容，再使用图片上传
 export function xhrRequest(url, data) {
-    let flag = true
     if(window.requestIdleCallback){
         return flag = window.requestIdleCallback(()=>{
             const xhr = new XMLHttpRequest();
@@ -61,17 +60,17 @@ export function xhrRequest(url, data) {
 export function isSupportSendBeacon(){
     return 'sendBeacon' in navigator;
 }
-// const sendBeacon = isSupportSendBeacon()? navigator.sendBeacon: xhrRequest
+const sendBeacon = isSupportSendBeacon()? navigator.sendBeacon: xhrRequest
 // beacon发送请求数据(存在兼容性)
 export function beaconRequest(data){
     let flag = true
     if(window.requestIdleCallback){
-        return flag = window.requestIdleCallback(()=>{
-            sendBeacon(config.url ,data);
+        window.requestIdleCallback(()=>{
+            return flag = sendBeacon(config.url ,data);
         },{ timeout: 3000 });
     } else {
-        return flag = setTimeout(()=>{
-            sendBeacon(config.url, data)
+        setTimeout(()=>{
+            return flag = sendBeacon(config.url, data)
         });
     }
 
