@@ -47,8 +47,9 @@ function overwriteFetch() {
             const endTime = performance.now();
             reportData.endTime = endTime;
             reportData.duration = endTime - startTime;
-            reportData.status = res.status;
-            reportData.success = res.ok;
+            const data = res.clone()
+            reportData.status = data.status;
+            reportData.success = data.ok;
             // TODO 上报数据
             lazyReportBatch(reportData) 
 
