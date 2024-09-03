@@ -10,7 +10,7 @@ export default function performance() {
     fetch();
     observerEntries();
     observerLCP();
-    observerFCP();
+    observerFCP(); 
     observerLoad();
     observerPaint();
     xhr();

@@ -30,6 +30,15 @@ export function report(data) {
     }
 }
 
+//批量上传
+export function lazyReportBatch(options){// 缓存方法
+    addCache(options);
+    const data= getCache(options)
+    if(data?.length > config.batchSize){
+        report(data);clearCache();
+    }
+}
+
  
 /**
  * 三种上报方式

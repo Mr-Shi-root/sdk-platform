@@ -1,6 +1,6 @@
 const path = require('path')
 const json = require('@rollup/plugin-json')
-const babel = require('@rollup-plugin-babel')
+const {babel} = require('@rollup/plugin-babel')
 
 const resolveFile = function(filePath) {
     return path.join(__dirname, filePath)
@@ -16,16 +16,18 @@ const plugins= [
         extensions: ['.js','.ts'],
         babelHelpers: 'bundled',
         presets: [
-            '@babel/env',
-            {
-                target: {
-                    browsers: [
-                        '> 1%',
-                        'last 2 versions',
-                        'not ie <= 8',
-                    ]
+            [
+                '@babel/env',
+                {
+                    targets: {
+                        browsers: [
+                            '> 1%',
+                            'last 2 versions',
+                            'not ie <= 8',
+                        ]
+                    }
                 }
-            }
+                ]
         ]
     })
 ]
@@ -33,7 +35,7 @@ const plugins= [
 module.exports = [
     {
         plugins,
-        input: resolveFile('../webEyeSDK.js'),
+        input: resolveFile('../src/webEyeSDK.js'),
         output: {
             file: resolveFile('../dist/webEyeSDK.js'),
             format: 'iife',
@@ -46,7 +48,7 @@ module.exports = [
     },
     {
         plugins,
-        input: resolveFile('../webEyeSDK.js'),
+        input: resolveFile('../src/webEyeSDK.js'),
         output: {
             file: resolveFile('../dist/webEyeSDK.js'),
             format: 'iife',
@@ -59,7 +61,7 @@ module.exports = [
     },
     {
         plugins,
-        input: resolveFile('../webEyeSDK.js'),
+        input: resolveFile('../src/webEyeSDK.js'),
         output: {
             file: resolveFile('../dist/webEyeSDK.esm.js'),
             format: 'esm',
@@ -72,7 +74,7 @@ module.exports = [
     },
     {
         plugins,
-        input: resolveFile('../webEyeSDK.js'),
+        input: resolveFile('../src/webEyeSDK.js'),
         output: {
             file: resolveFile('../dist/webEyeSDK.cjs.js'),
             format: 'cjs',

@@ -1,5 +1,5 @@
 import {lazyReportBatch} from "../report"
-import {generateUniqueId} from "../../utils"
+import {generateUniqueId} from "../utils"
 
 export default function pageChange(data) {
     // hash history

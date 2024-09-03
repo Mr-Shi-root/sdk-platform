@@ -33,3 +33,10 @@ function entryHandle(entries) {
 const observer = new PerformanceObserver(entryHandle);
 // buffer: true 确保观察到所有paint事件
 observer.observe({type: 'paint', buffered: true});
+
+export default function observerPaint() {
+  // 统计和计算fp的事件
+  const observer = new PerformanceObserver(entryHandle);
+  // buffer: true 确保观察到所有paint事件
+  observer.observe({type: 'paint', buffered: true});
+}
