@@ -48,6 +48,7 @@ function overwriteFetch() {
             reportData.endTime = endTime;
             reportData.duration = endTime - startTime;
             const data = res.clone()
+            // clone函数的主体只能被消耗一次，json和text都会消耗，使得函数无法再次使用，所以创建副本用来调用
             reportData.status = data.status;
             reportData.success = data.ok;
             // TODO 上报数据
