@@ -1,7 +1,9 @@
+import { deepcopy } from "./deep";
+
 const cache = [];
 
 export function getCache() {
-    return cache;
+    return deepcopy(cache);
 }
 
 export function addCache(data) {
