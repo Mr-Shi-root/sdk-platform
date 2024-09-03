@@ -1,4 +1,9 @@
 import { lazyReportBatch } from "./report";
+import performance from "./performance";
+import error from "./error";
+import behavior from "./behavior";
+import {setConfig} from './config'
+
 window.__webEyeSDK__ = {
     version: '0.0.1',
  }
@@ -8,6 +13,7 @@ window.__webEyeSDK__ = {
     if(__webEyeSDK__.vue) return;
     __webEyeSDK__.vue = true;
     const handler = Vue.config.errorHandler;
+    // 重写vue的errorHandler方法，在errorHandler中上报错误信息，并执行原来的errorHandler方法
     Vue.config.errorHandler = function(err, vm, info) {
         // TODO 上报错误
         lazyReportBatch(err) 
@@ -17,14 +23,30 @@ window.__webEyeSDK__ = {
     }
  }
 // 针对react项目的错误上报
- function errorBoundary(err) {
-    if (__webEyeSDK__.react) return;
-    __webEyeSDK__.react = true;
-    // TODO 上报错误
-    lazyReportBatch(err) 
- }
+function errorBoundary(err) {
+   if (__webEyeSDK__.react) return;
+   __webEyeSDK__.react = true;
+   // TODO 上报错误
+   lazyReportBatch(err) 
+}
 
- export default {
-    install,
-    errorBoundary
- }
+// init初始化定义config的参数
+function init(options) {
+   setConfig(options)
+}
+// webEyeSDK.init({
+//    url: 'xxxx',
+//    name: 'xxxx',
+//    id: '',
+//    isImageUpload: false,
+//    batchSize: 20, // 批量上报数据条数,
+// })
+
+export default {
+   init,
+   install,
+   errorBoundary,
+   performance,
+   error,
+   behavior,
+}
