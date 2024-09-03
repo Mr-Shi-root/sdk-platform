@@ -30,17 +30,7 @@ export function report(data) {
     }
 }
 
-// 批量上传
-export function lazyReportBatch(data) {
-    // 缓存方法
-    addCache(data);
-    const data = getCache(data);
-    if (data?.length > config.batchSize) {
-        report(data);
-        clearCache();
-    }
-}
-
+ 
 /**
  * 三种上报方式
  * 发送图片数据 
