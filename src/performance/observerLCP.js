@@ -32,11 +32,6 @@ function entryHandle(entries) {
     }
 }
 
-// 统计和计算lcp的事件
-const observer = new PerformanceObserver(entryHandle);
-// buffer: true 确保观察到所有paint事件
-observer.observe({type: 'largest-contentful-paint', buffered: true});
-
 export default function observerLCP() {
     // 统计和计算lcp的事件
     const observer = new PerformanceObserver(entryHandle);

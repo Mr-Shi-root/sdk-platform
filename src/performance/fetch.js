@@ -1,7 +1,7 @@
 import { lazyReportBatch } from "../report";
 
 // fetch 请求时长
-const originalFetch = window.fetch();
+const originalFetch = window.fetch;
 
 // function overwriteFetch() {
 //     window.fetch = async (...args) => {
@@ -53,7 +53,6 @@ function overwriteFetch() {
             reportData.success = data.ok;
             // TODO 上报数据
             lazyReportBatch(reportData) 
-
             return res;
         }).catch((err) => {
             const endTime = performance.now();
