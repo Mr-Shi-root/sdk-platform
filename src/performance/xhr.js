@@ -41,7 +41,7 @@ function overwriteOpenAndSend() {
                 subType: 'xhr',
                 success: status >= 200 && status < 300, // 如果是200或2开头的，可以认为是请求成功的
             }
-            console.log(reportData);
+            // console.log(reportData);
 
             // TODO 发送数据
             lazyReportBatch(reportData) 

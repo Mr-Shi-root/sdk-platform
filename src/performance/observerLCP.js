@@ -8,7 +8,7 @@
 import { lazyReportBatch } from "../report";
 // 2.上报的api
 function entryHandle(entries) {
-    console.log('entries:',entries);
+    // console.log('entries:',entries);
 
     if (observer) {
         observer.disconnect();
@@ -16,8 +16,8 @@ function entryHandle(entries) {
     
     for (const entry of entries.getEntries()) {
         const json = entry.toJSON();
-        console.log('json:',json);
-        console.log('element:', entry.element);
+        // console.log('json:',json);
+        // console.log('element:', entry.element);
         
         // 需要上报的参数
         const reportData = {

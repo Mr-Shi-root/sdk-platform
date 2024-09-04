@@ -26,9 +26,9 @@ import { lazyReportBatch } from "../report";
  export default function error() {
     // 捕获资源加载失败的错误： js css img
     window.addEventListener('error', function (event) {
-        console.log('error event:', event);
+        // console.log('error event:', event);
         const target = event.target;
-        console.log('target:',target.src , target.href);
+        // console.log('target:',target.src , target.href);
         // 非js css img资源加载的报错， 如果为null，可能是以下三种原因
         // js运行时错误：脚本执行中的错误。
         // 非 DOM 元素资源错误：如网络请求失败、AJAX 错误等。
@@ -51,7 +51,7 @@ import { lazyReportBatch } from "../report";
                 html: target.outerHTML,
                 paths: error.paths
             }
-            console.log('reportData:',reportData);
+            // console.log('reportData:',reportData);
             // TODO 发送数据
             lazyReportBatch(reportData) 
         }
@@ -59,7 +59,7 @@ import { lazyReportBatch } from "../report";
 
     // 捕获js语法的一系列错误
     window.onerror = function (msg, url, lineNo, columnNo, error) {
-        console.log('onerror:', msg, url, columnNo, error);
+        // console.log('onerror:', msg, url, columnNo, error);
         const reportData = {
             type: 'error',
             subType: 'js',
@@ -74,12 +74,12 @@ import { lazyReportBatch } from "../report";
         }
         // TODO 发送错误信息
         lazyReportBatch(reportData) 
-        console.log('reportData:', reportData);
+        // console.log('reportData:', reportData);
     }
 
     // 捕获promise的错误 async await
     window.addEventListener('unhandledrejection', function (event) {
-        console.log('unhandledrejection event:', event);
+        // console.log('unhandledrejection event:', event);
         const reportData = {
             type: 'error',
             subType: 'promise',
@@ -89,7 +89,7 @@ import { lazyReportBatch } from "../report";
         }
         // TODO 发送错误信息
         lazyReportBatch(reportData) 
-        console.log('reportData:', reportData);
+        // console.log('reportData:', reportData);
     });
 
     // 记录错误的路径

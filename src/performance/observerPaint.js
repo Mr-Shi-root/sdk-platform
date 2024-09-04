@@ -8,7 +8,7 @@
 import { lazyReportBatch } from "../report";
 // 2.上报的api
 function entryHandle(entries) {
-    console.log('entries:',entries.getEntries());
+    // console.log('entries:',entries.getEntries());
     
   for (const entry of entries.getEntries()) {
     if (entry.name === 'first-paint') {

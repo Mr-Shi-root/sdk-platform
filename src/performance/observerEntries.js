@@ -1,4 +1,4 @@
-
+import { lazyReportBatch } from "../report";
 export default function observerEntries(){
     if (document.readyState == 'complete') {
         observerEvent()
@@ -38,23 +38,11 @@ export function observerEvent() {
                 resourceSize: entry.decodedBodySize, // 响应内容大小(资源解压后的大小)
                 startTime: performance.now(), 
             }
-            console.log(entry);
+            // console.log(entry);
             // 发送数据进行上报
+            lazyReportBatch(reporData)
         }
     }
     let observer = new PerformanceObserver(entryHandle)
     observer.observe({type: ['resource'], buffered: true})
 }
-
-/**
- * 
- * 
- */
-function entryHandle(list) {
-    const entries = list.geteEntries();
-    for (const entry of entries) {
-        console.log(entry);
-    }
-}
-let observer = new PerformanceObserver(entryHandle)
-observer.observe({type: ['resource'], buffered: true})
