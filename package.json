@@ -16,6 +16,9 @@
     "rollup": "^4.21.2"
   },
   "dependencies": {
-    "@babel/core": "^7.25.2"
+    "@babel/core": "^7.25.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
   }
 }
