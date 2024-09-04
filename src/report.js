@@ -22,12 +22,10 @@ export function report(data) {
         data
     });
     // TODO 发送数据 优先使用 secdBeacon，如果不兼容，再使用图片上传4
-    lazyReportBatch(reportData) 
-    const value = beaconRequest(config.url, reporData)
-    if (!value) {
+    if (window.navigator.sendBeacon) return beaconRequest(reportData)
         // 上报数据，使用图片的方式
-        config.isImageUpload ? imgRequest(reporData) : xhrRequest(config.url, reporData); 
-    }
+    config.isImageUpload ? imgRequest(reportData) : xhrRequest(config.url, reportData); 
+    // 
 }
 
 //批量上传
@@ -36,7 +34,7 @@ export function lazyReportBatch(options){// 缓存方法
     const data= getCache(options)
     if(data?.length > config.batchSize){
         report(data);clearCache();
-    }
+    } 
 }
 
  

@@ -12,13 +12,24 @@ window.__webEyeSDK__ = {
 export function install(Vue, options) {
    if(__webEyeSDK__.vue) return;
    __webEyeSDK__.vue = true;
+   setConfig(options)
    const handler = Vue.config.errorHandler;
    // 重写vue的errorHandler方法，在errorHandler中上报错误信息，并执行原来的errorHandler方法
    Vue.config.errorHandler = function(err, vm, info) {
+      const reportData = {
+         error: err.stack,
+         stack: info,
+         timestamp: Date.now(),
+         component: vm.$options.name || 'unknown',
+         url: window.location.href,
+         type: 'error',
+         subType: 'Vue'
+         // TODO 获取其他参数
+      }
       // TODO 上报错误
-      lazyReportBatch(err) 
+      lazyReportBatch(reportData) 
       if(handler) {
-         handler(err, vm, info); 
+         handler.call(this, err, vm, info); 
       }
    }
 }
@@ -27,7 +38,18 @@ function errorBoundary(err) {
    if (__webEyeSDK__.react) return;
    __webEyeSDK__.react = true;
    // TODO 上报错误
-   lazyReportBatch(err) 
+   const reportData = {
+      error: err.stack,
+      stack: info,
+      timestamp: Date.now(),
+      component: vm.$options.name || 'unknown',
+      url: window.location.href,
+      type: 'error',
+      subType: 'React'
+      // TODO 获取其他参数
+   }
+   // TODO 上报错误
+   lazyReportBatch(reportData) 
 }
 
 // init初始化定义config的参数
