@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.text());
 
 app.post('/reportData', (req, res) => {
-    console.log('reportData', req.body);
+    console.log('server-reportData', req.body);
     res.status(200).send('success');
 })
 

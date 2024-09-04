@@ -34,7 +34,7 @@ export function install(Vue, options) {
    }
 }
 // 针对react项目的错误上报
-function errorBoundary(err) {
+export function errorBoundary(err) {
    if (__webEyeSDK__.react) return;
    __webEyeSDK__.react = true;
    // TODO 上报错误
@@ -53,8 +53,12 @@ function errorBoundary(err) {
 }
 
 // init初始化定义config的参数
-function init(options) {
+export function init(options) {
    setConfig(options)
+   // performance()
+   console.log('error:!!')
+   error()
+   // behavior()
 }
 // webEyeSDK.init({
 //    url: 'xxxx',

@@ -1,10 +1,10 @@
 const config = {
-    url: '',
+    url: 'http://127.0.0.1:8080/api',
     projectName: 'xxxx',
     name: 'xxxx',
     id: '',
     isImageUpload: false,
-    batchSize: 20, // 批量上报数据条数
+    batchSize: 5, // 批量上报数据条数
 }
 
 // 暴露给外部可以初始化内部config数据

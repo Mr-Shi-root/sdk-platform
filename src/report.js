@@ -13,7 +13,7 @@ export default function generateUniqueId() {
 }
 
 export function report(data) {
-    if (!config.report) {
+    if (!config.url) {
         console.error('请设置上传 url 地址');
     }
 
@@ -21,19 +21,28 @@ export function report(data) {
         id: generateUniqueId(),
         data
     });
-    // TODO 发送数据 优先使用 secdBeacon，如果不兼容，再使用图片上传4
-    if (window.navigator.sendBeacon) return beaconRequest(reportData)
-        // 上报数据，使用图片的方式
-    config.isImageUpload ? imgRequest(reportData) : xhrRequest(config.url, reportData); 
-    // 
+    // 上报数据，使用图片的方式
+    if (config.isImageUpload) {
+        imgRequest(reportData);
+    } else {
+        // 优先使用 sendBeacon
+        if (window.navigator.sendBeacon) {
+            return beaconRequest(reportData);
+        } else {
+            xhrRequest(reportData);
+        }
+    }
 }
 
 //批量上传
 export function lazyReportBatch(options){// 缓存方法
     addCache(options);
     const data= getCache(options)
+    console.log('lazyDataArr:', data);
+    
     if(data?.length > config.batchSize){
-        report(data);clearCache();
+        report(data);
+        clearCache();
     } 
 }
 
@@ -47,12 +56,16 @@ export function lazyReportBatch(options){// 缓存方法
 
 
 export function imgRequest(data) {
+    console.log('imgRequest:');
+    
     const img = new Image();
     img.src =  `${config.url}?data=${encodeURIComponent(JSON.stringify(data))}`;
 }
 
 // 普通ajax发送请求数据
 export function xhrRequest(url, data) {
+    console.log('xhrRequest:');
+    
     if(window.requestIdleCallback){
         return flag = window.requestIdleCallback(()=>{
             const xhr = new XMLHttpRequest();
@@ -72,22 +85,21 @@ export function xhrRequest(url, data) {
     originalSend.call(xhr, JSON.stringify(data));
 }
 
-// sendBeacon
-export function isSupportSendBeacon(){
-    return 'sendBeacon' in navigator;
-}
-const sendBeacon = isSupportSendBeacon()? navigator.sendBeacon: xhrRequest
-// beacon发送请求数据(存在兼容性)
-export function beaconRequest(data){
-    let flag = true
-    if(window.requestIdleCallback){
-        window.requestIdleCallback(()=>{
-            return flag = sendBeacon(config.url ,data);
-        },{ timeout: 3000 });
+// 
+// const sendBeacon = isSupportSendBeacon() ? navigator.sendBeacon : xhrRequest
+export function beaconRequest(data) {
+    console.log('beaconRequest:');
+    
+    if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+            () => {
+                window.navigator.sendBeacon(config.url, data);
+            },
+            { timeout: 3000 }
+        );
     } else {
-        setTimeout(()=>{
-            return flag = sendBeacon(config.url, data)
+        setTimeout(() => {
+            window.navigator.sendBeacon(config.url, data);
         });
     }
-
 }

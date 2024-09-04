@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../../dist/webEyeSDK.js"></script>
+    <script>
+        WebEyeSDK.init({
+            url: 'http://127.0.0.1:3000/reportData'
+        })
+    </script>
+</head>
+<body>
+    <!-- 图片加载错误 -->
+    <img src="http://toutiao.com/x.png" alt="">
+    <img src="http://toutiao.com/x2.png" alt="">
+    <img src="http://toutiao.com/x3.png" alt="">
+    <img src="http://toutiao.com/x4.png" alt="">
+    <script>
+        // promise抛出的error
+        function test() {
+            return Promise.reject(Error("promise"))
+        }
+        function test2() {
+            return Promise.reject(Error("async"))
+        }
+        test()
+        test2()
+        // 普通js抛出的error
+        throw Error("test")
+    </script>
+</body>
+</html>
