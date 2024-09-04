@@ -14,7 +14,7 @@ export default function observerEntries(){
 // 统计所有静态资源的方法
 export function observerEvent() {
     const entryHandle = (list) => {
-        const entries = list.geteEntries();
+        const entries = list.getEntries();
         for (const entry of entries) {
             if(observer) {
                 observer.disconnect();
