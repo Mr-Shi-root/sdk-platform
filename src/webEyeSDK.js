@@ -55,9 +55,9 @@ export function errorBoundary(err) {
 // init初始化定义config的参数
 export function init(options) {
    setConfig(options)
-   // performance()
-   console.log('error:!!')
-   error()
+   console.log('performance:!!')
+   performance()
+   // error()
    // behavior()
 }
 // webEyeSDK.init({
