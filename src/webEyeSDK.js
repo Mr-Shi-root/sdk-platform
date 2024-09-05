@@ -10,6 +10,7 @@ window.__webEyeSDK__ = {
 
  // 针对vue 项目的错误上报
 export function install(Vue, options) {
+   // vue中app.use方法,默认调install方法,统计错误
    if(__webEyeSDK__.vue) return;
    __webEyeSDK__.vue = true;
    setConfig(options)
@@ -26,6 +27,7 @@ export function install(Vue, options) {
          subType: 'Vue'
          // TODO 获取其他参数
       }
+      console.log('vue installed error', reportData);
       // TODO 上报错误
       lazyReportBatch(reportData) 
       if(handler) {
@@ -58,7 +60,7 @@ export function init(options) {
    console.log('performance:!!')
    performance()
    // error()
-   // behavior()
+   // behavior() 
 }
 // webEyeSDK.init({
 //    url: 'xxxx',
