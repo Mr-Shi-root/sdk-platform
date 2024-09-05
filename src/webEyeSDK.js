@@ -36,15 +36,15 @@ export function install(Vue, options) {
    }
 }
 // 针对react项目的错误上报
-export function errorBoundary(err) {
+export function errorBoundary(err, info) {
+   console.log('react error');
    if (__webEyeSDK__.react) return;
    __webEyeSDK__.react = true;
    // TODO 上报错误
    const reportData = {
-      error: err.stack,
-      stack: info,
+      error: err?.stack,
+      info,
       timestamp: Date.now(),
-      component: vm.$options.name || 'unknown',
       url: window.location.href,
       type: 'error',
       subType: 'React'
@@ -57,9 +57,9 @@ export function errorBoundary(err) {
 // init初始化定义config的参数
 export function init(options) {
    setConfig(options)
-   console.log('performance:!!')
-   performance()
-   // error()
+   console.log('error:!!')
+   // performance()
+   error()
    // behavior() 
 }
 // webEyeSDK.init({
