@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebEye SDK 演示页面</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+
+    .btn-warning {
+      background: #f39c12;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .status {
+      padding: 15px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      color: #155724;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #1976D2;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .info-box p {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 5px 0;
+    }
+
+    .code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 WebEye SDK 演示</h1>
+    <p class="subtitle">体验完整的错误行为路径还原功能</p>
+
+    <!-- 用户登录 -->
+    <div class="section">
+      <h2>👤 用户登录</h2>
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" placeholder="请输入邮箱">
+      </div>
+      <div class="button-group">
+        <button class="btn-primary" onclick="handleLogin()">登录</button>
+        <button class="btn-warning" onclick="handleLogout()">登出</button>
+      </div>
+    </div>
+
+    <!-- 正常操作 -->
+    <div class="section">
+      <h2>✅ 正常操作</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="normalClick()">普通点击</button>
+        <button class="btn-primary" onclick="ajaxRequest()">发送请求</button>
+        <button class="btn-primary" onclick="addCustomBreadcrumb()">添加面包屑</button>
+        <button class="btn-success" onclick="viewSessionInfo()">查看 Session</button>
+      </div>
+    </div>
+
+    <!-- 触发错误 -->
+    <div class="section">
+      <h2>❌ 触发错误（测试错误捕获）</h2>
+      <div class="button-group">
+        <button class="btn-danger" onclick="triggerJSError()">JS 错误</button>
+        <button class="btn-danger" onclick="triggerPromiseError()">Promise 错误</button>
+        <button class="btn-danger" onclick="triggerCustomError()">自定义错误</button>
+        <button class="btn-danger" onclick="triggerResourceError()">资源加载错误</button>
+      </div>
+    </div>
+
+    <!-- 状态显示 -->
+    <div class="status" id="status"></div>
+
+    <!-- 说明信息 -->
+    <div class="info-box">
+      <h3>📖 使用说明</h3>
+      <p>1. 点击"登录"按钮，SDK 会创建一个用户 Session</p>
+      <p>2. 进行各种操作，SDK 会自动记录所有行为到 Breadcrumb</p>
+      <p>3. 点击"触发错误"按钮，SDK 会捕获错误并上报完整的行为链路</p>
+      <p>4. 打开浏览器控制台，查看 SDK 的日志输出</p>
+      <p>5. 打开 <span class="code">dashboard/ErrorDetailPage.html</span> 查看错误详情</p>
+    </div>
+  </div>
+
+  <!-- 引入 SDK -->
+  <script src="../src/utils.js"></script>
+  <script src="../src/deep.js"></script>
+  <script src="../src/catch.js"></script>
+  <script src="../src/config.js"></script>
+  <script src="../src/report.js"></script>
+  <script src="../src/session/SessionManager.js"></script>
+  <script src="../src/breadcrumb/BreadcrumbManager.js"></script>
+  <script src="../src/tracker/BehaviorTracker.js"></script>
+  <script src="../src/error/ErrorReporter.js"></script>
+  <script src="../src/webEyeSDK.js"></script>
+
+  <script>
+    // 初始化 SDK
+    webEyeSDK.init({
+      url: 'http://localhost:3000/api/error/report',
+      projectKey: 'demo-project',
+      enableBehaviorTracking: true,
+      enableErrorTracking: true,
+      maxBreadcrumbs: 50,
+      batchSize: 20,
+    });
+
+    console.log('%c🚀 WebEye SDK 已初始化', 'color: #667eea; font-size: 16px; font-weight: bold;');
+
+    // 显示状态消息
+    function showStatus(message, type = 'success') {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = 'status show';
+      status.style.background = type === 'success' ? '#d4edda' : '#f8d7da';
+      status.style.color = type === 'success' ? '#155724' : '#721c24';
+      status.style.borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
+
+      setTimeout(() => {
+        status.classList.remove('show');
+      }, 3000);
+    }
+
+    // 用户登录
+    function handleLogin() {
+      const username = document.getElementById('username').value || '测试用户';
+      const email = document.getElementById('email').value || 'test@example.com';
+
+      webEyeSDK.setUser('user-' + Date.now(), {
+        username,
+        email,
+      });
+
+      showStatus(`✅ 用户 "${username}" 已登录，Session 已创建`);
+      console.log('用户登录:', { username, email });
+    }
+
+    // 用户登出
+    function handleLogout() {
+      webEyeSDK.clearUser();
+      showStatus('✅ 用户已登出，Session 已结束');
+      console.log('用户登出');
+    }
+
+    // 普通点击
+    function normalClick() {
+      showStatus('✅ 普通点击操作已记录到 Breadcrumb');
+      console.log('普通点击操作');
+    }
+
+    // Ajax 请求
+    function ajaxRequest() {
+      fetch('https://jsonplaceholder.typicode.com/posts/1')
+        .then(response => response.json())
+        .then(data => {
+          showStatus('✅ Ajax 请求成功，已记录到 Breadcrumb');
+          console.log('Ajax 请求成功:', data);
+        })
+        .catch(error => {
+          showStatus('❌ Ajax 请求失败', 'error');
+          console.error('Ajax 请求失败:', error);
+        });
+    }
+
+    // 添加自定义面包屑
+    function addCustomBreadcrumb() {
+      webEyeSDK.addBreadcrumb({
+        type: 'user',
+        category: 'custom',
+        message: '用户执行了自定义操作',
+        data: {
+          action: 'custom_action',
+          timestamp: Date.now(),
+        },
+      });
+
+      showStatus('✅ 自定义面包屑已添加');
+      console.log('添加自定义面包屑');
+    }
+
+    // 查看 Session 信息
+    function viewSessionInfo() {
+      const sessionInfo = webEyeSDK.getSessionInfo();
+      console.log('当前 Session 信息:', sessionInfo);
+
+      const breadcrumbs = webEyeSDK.getBreadcrumbs();
+      console.log('当前 Breadcrumb 链路:', breadcrumbs);
+
+      showStatus(`✅ Session 信息已输出到控制台（共 ${breadcrumbs.length} 条行为记录）`);
+    }
+
+    // 触发 JS 错误
+    function triggerJSError() {
+      showStatus('⚠️ 即将触发 JS 错误...', 'error');
+
+      setTimeout(() => {
+        // 故意访问 undefined 的属性
+        const obj = undefined;
+        console.log(obj.property); // 这会抛出错误
+      }, 500);
+    }
+
+    // 触发 Promise 错误
+    function triggerPromiseError() {
+      showStatus('⚠️ 即将触发 Promise 错误...', 'error');
+
+      setTimeout(() => {
+        Promise.reject(new Error('这是一个 Promise 错误'));
+      }, 500);
+    }
+
+    // 触发自定义错误
+    function triggerCustomError() {
+      showStatus('⚠️ 即将触发自定义错误...', 'error');
+
+      setTimeout(() => {
+        try {
+          throw new Error('这是一个自定义错误');
+        } catch (error) {
+          webEyeSDK.captureError(error, {
+            context: 'demo_page',
+            action: 'trigger_custom_error',
+            userId: 'demo-user',
+          });
+        }
+      }, 500);
+    }
+
+    // 触发资源加载错误
+    function triggerResourceError() {
+      showStatus('⚠️ 即将触发资源加载错误...', 'error');
+
+      setTimeout(() => {
+        const img = document.createElement('img');
+        img.src = 'https://example.com/non-existent-image.jpg';
+        document.body.appendChild(img);
+
+        setTimeout(() => {
+          document.body.removeChild(img);
+        }, 2000);
+      }, 500);
+    }
+
+    // 页面加载完成后的提示
+    window.addEventListener('load', () => {
+      console.log('%c📍 所有操作都会被自动记录到 Breadcrumb', 'color: #27ae60; font-size: 14px;');
+      console.log('%c❌ 所有错误都会被自动捕获并上报', 'color: #e74c3c; font-size: 14px;');
+      console.log('%c💡 打开控制台查看详细日志', 'color: #f39c12; font-size: 14px;');
+    });
+  </script>
+</body>
+</html>

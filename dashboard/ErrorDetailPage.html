@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>错误详情 - 监控平台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* 头部 */
+    .header {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .error-title {
+      font-size: 18px;
+      color: #e74c3c;
+      font-weight: 500;
+      margin-bottom: 15px;
+      word-break: break-all;
+    }
+
+    .error-meta {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-label {
+      color: #999;
+    }
+
+    .meta-value {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-error {
+      background: #fee;
+      color: #e74c3c;
+    }
+
+    .badge-warning {
+      background: #fff3cd;
+      color: #f39c12;
+    }
+
+    .badge-success {
+      background: #d4edda;
+      color: #27ae60;
+    }
+
+    /* 主要内容区域 */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 20px;
+    }
+
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 卡片样式 */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* 时间轴样式 */
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e0e0e0;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .timeline-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .timeline-icon {
+      position: absolute;
+      left: -32px;
+      top: 2px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      z-index: 1;
+    }
+
+    .timeline-icon.navigation {
+      background: #3498db;
+      border-color: #3498db;
+      color: #fff;
+    }
+
+    .timeline-icon.user {
+      background: #9b59b6;
+      border-color: #9b59b6;
+      color: #fff;
+    }
+
+    .timeline-icon.http {
+      background: #1abc9c;
+      border-color: #1abc9c;
+      color: #fff;
+    }
+
+    .timeline-icon.error {
+      background: #e74c3c;
+      border-color: #e74c3c;
+      color: #fff;
+    }
+
+    .timeline-icon.console {
+      background: #f39c12;
+      border-color: #f39c12;
+      color: #fff;
+    }
+
+    .timeline-time {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .timeline-message {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .timeline-data {
+      font-size: 13px;
+      color: #666;
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+
+    .timeline-data-item {
+      margin: 4px 0;
+    }
+
+    /* 堆栈信息 */
+    .stack-trace {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .stack-trace .error-line {
+      color: #f48771;
+    }
+
+    .stack-trace .file-path {
+      color: #4ec9b0;
+    }
+
+    /* Session 信息 */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    /* 页面状态 */
+    .state-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .state-item:last-child {
+      border-bottom: none;
+    }
+
+    .state-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .state-value {
+      font-size: 13px;
+      color: #333;
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    /* 操作按钮 */
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      color: #fff;
+    }
+
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+
+    /* 统计卡片 */
+    .stat-card {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #e74c3c;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* 环境信息 */
+    .env-list {
+      list-style: none;
+    }
+
+    .env-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 13px;
+    }
+
+    .env-item:last-child {
+      border-bottom: none;
+    }
+
+    .env-key {
+      color: #999;
+      margin-right: 8px;
+    }
+
+    .env-value {
+      color: #333;
+      word-break: break-all;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 加载动画 */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1>错误详情</h1>
+      <div class="error-title" id="errorTitle">
+        TypeError: Cannot read property 'data' of undefined
+      </div>
+      <div class="error-meta">
+        <div class="meta-item">
+          <span class="meta-label">错误ID:</span>
+          <span class="meta-value" id="errorId">err-abc123</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">类型:</span>
+          <span class="badge badge-error" id="errorType">JS Error</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">首次发生:</span>
+          <span class="meta-value" id="firstSeen">2025-12-08 10:30:00</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">最近发生:</span>
+          <span class="meta-value" id="lastSeen">2025-12-08 14:25:00</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">发生次数:</span>
+          <span class="meta-value" id="occurrenceCount">156 次</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">影响用户:</span>
+          <span class="meta-value" id="affectedUsers">23 人</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+      <!-- 左侧面板 -->
+      <div class="left-panel">
+        <!-- 用户行为路径（时间轴） -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              📍 用户行为路径（时间轴）
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="timeline" id="breadcrumbTimeline">
+              <!-- 时间轴项目将通过 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 错误堆栈 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              🔍 错误堆栈
+            </div>
+            <button class="btn btn-secondary" onclick="copyStack()">复制</button>
+          </div>
+          <div class="card-body">
+            <div class="stack-trace" id="stackTrace">
+              <!-- 堆栈信息将通过 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 页面状态 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              📄 页面状态
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="pageState">
+              <!-- 页面状态将通过 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧面板 -->
+      <div class="right-panel">
+        <!-- 操作 -->
+        <div class="card">
+          <div class="card-body">
+            <div class="actions">
+              <button class="btn btn-success" onclick="resolveError()">标记已解决</button>
+              <button class="btn btn-secondary" onclick="ignoreError()">忽略</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              📊 统计信息
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stat-card">
+              <div class="stat-value" id="statOccurrence">156</div>
+              <div class="stat-label">发生次数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="statUsers">23</div>
+              <div class="stat-label">影响用户</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session 信息 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              👤 Session 信息
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-grid" id="sessionInfo">
+              <!-- Session 信息将通过 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 环境信息 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              💻 环境信息
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="env-list" id="environmentInfo">
+              <!-- 环境信息将通过 JS 动态生成 -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟错误数据（实际应该从 API 获取）
+    const mockErrorData = {
+      errorId: 'err-abc123',
+      type: 'error',
+      subType: 'js',
+      message: "TypeError: Cannot read property 'data' of undefined",
+      stack: `TypeError: Cannot read property 'data' of undefined
+    at handleResponse (app.js:234:15)
+    at XMLHttpRequest.onload (app.js:189:9)
+    at Object.success (jquery.min.js:2:27457)
+    at fire (jquery.min.js:2:25325)
+    at Object.fireWith [as resolveWith] (jquery.min.js:2:26119)`,
+
+      session: {
+        sessionId: 'session-1733654985-abc123',
+        userId: 'user-456',
+        sessionStartTime: 1733654400000,
+        sessionDuration: 900000,
+        pageViewCount: 5,
+        errorCount: 1,
+        deviceInfo: {
+          platform: 'MacIntel',
+          language: 'zh-CN',
+          screenResolution: '1920x1080',
+          viewport: '1440x900'
+        }
+      },
+
+      breadcrumbs: [
+        {
+          sequence: 1,
+          type: 'navigation',
+          category: 'pageview',
+          message: '访问页面: /dashboard',
+          timestamp: 1733654400000,
+          data: { url: '/dashboard' }
+        },
+        {
+          sequence: 2,
+          type: 'user',
+          category: 'click',
+          message: '点击元素: #userProfile "用户资料"',
+          timestamp: 1733654405000,
+          data: { selector: '#userProfile', innerText: '用户资料' }
+        },
+        {
+          sequence: 3,
+          type: 'navigation',
+          category: 'route',
+          message: '路由跳转: /profile',
+          timestamp: 1733654407000,
+          data: { path: '/profile' }
+        },
+        {
+          sequence: 4,
+          type: 'user',
+          category: 'input',
+          message: '输入内容: #emailInput',
+          timestamp: 1733654410000,
+          data: { selector: '#emailInput', type: 'email' }
+        },
+        {
+          sequence: 5,
+          type: 'user',
+          category: 'click',
+          message: '点击元素: #saveBtn "保存"',
+          timestamp: 1733654413000,
+          data: { selector: '#saveBtn', innerText: '保存' }
+        },
+        {
+          sequence: 6,
+          type: 'http',
+          category: 'ajax',
+          message: 'Ajax成功: POST /api/user/update',
+          timestamp: 1733654415000,
+          data: { method: 'POST', url: '/api/user/update', status: 200 }
+        },
+        {
+          sequence: 7,
+          type: 'error',
+          category: 'js',
+          message: 'JS错误: TypeError: Cannot read property \'data\' of undefined',
+          timestamp: 1733654415500,
+          data: { message: "Cannot read property 'data' of undefined" }
+        }
+      ],
+
+      pageState: {
+        url: 'https://example.com/profile',
+        pathname: '/profile',
+        title: '用户资料 - 示例网站',
+        referrer: 'https://example.com/dashboard',
+        visibility: 'visible',
+        scrollPosition: { x: 0, y: 320 }
+      },
+
+      environment: {
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        language: 'zh-CN',
+        platform: 'MacIntel',
+        online: true,
+        cookieEnabled: true,
+        screenResolution: '1920x1080',
+        timezone: 'Asia/Shanghai'
+      },
+
+      timestamp: 1733654415500,
+
+      // Issue 统计信息
+      issueStats: {
+        firstSeenAt: 1733654400000,
+        lastSeenAt: 1733668500000,
+        occurrenceCount: 156,
+        affectedUsers: 23
+      }
+    };
+
+    // 格式化时间
+    function formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+
+    // 格式化相对时间
+    function formatRelativeTime(timestamp, baseTimestamp) {
+      const diff = timestamp - baseTimestamp;
+      const seconds = Math.floor(diff / 1000);
+
+      if (seconds < 60) return `${seconds}秒`;
+      if (seconds < 3600) return `${Math.floor(seconds / 60)}分${seconds % 60}秒`;
+      return `${Math.floor(seconds / 3600)}小时${Math.floor((seconds % 3600) / 60)}分`;
+    }
+
+    // 获取类型图标
+    function getTypeIcon(type) {
+      const icons = {
+        navigation: '🌐',
+        user: '👆',
+        http: '🌐',
+        console: '📝',
+        error: '❌'
+      };
+      return icons[type] || '•';
+    }
+
+    // 渲染时间轴
+    function renderBreadcrumbs(breadcrumbs) {
+      const timeline = document.getElementById('breadcrumbTimeline');
+      const baseTime = breadcrumbs[0]?.timestamp || Date.now();
+
+      timeline.innerHTML = breadcrumbs.map(crumb => {
+        const relativeTime = formatRelativeTime(crumb.timestamp, baseTime);
+        const time = formatTime(crumb.timestamp);
+
+        return `
+          <div class="timeline-item">
+            <div class="timeline-icon ${crumb.type}">
+              ${getTypeIcon(crumb.type)}
+            </div>
+            <div class="timeline-time">${time} (+${relativeTime})</div>
+            <div class="timeline-message">${crumb.message}</div>
+            ${crumb.data ? `
+              <div class="timeline-data">
+                ${Object.entries(crumb.data).map(([key, value]) =>
+                  `<div class="timeline-data-item"><strong>${key}:</strong> ${value}</div>`
+                ).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染堆栈信息
+    function renderStack(stack) {
+      const stackEl = document.getElementById('stackTrace');
+      stackEl.textContent = stack || '无堆栈信息';
+    }
+
+    // 渲染 Session 信息
+    function renderSessionInfo(session) {
+      const container = document.getElementById('sessionInfo');
+
+      container.innerHTML = `
+        <div class="info-item">
+          <div class="info-label">Session ID</div>
+          <div class="info-value">${session.sessionId}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">用户 ID</div>
+          <div class="info-value">${session.userId}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Session 时长</div>
+          <div class="info-value">${Math.floor(session.sessionDuration / 60000)} 分钟</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">页面浏览</div>
+          <div class="info-value">${session.pageViewCount} 次</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">浏览器</div>
+          <div class="info-value">${session.deviceInfo.platform}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">屏幕分辨率</div>
+          <div class="info-value">${session.deviceInfo.screenResolution}</div>
+        </div>
+      `;
+    }
+
+    // 渲染页面状态
+    function renderPageState(pageState) {
+      const container = document.getElementById('pageState');
+
+      container.innerHTML = `
+        <div class="state-item">
+          <div class="state-label">页面URL</div>
+          <div class="state-value">${pageState.url}</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">页面标题</div>
+          <div class="state-value">${pageState.title}</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">来源页面</div>
+          <div class="state-value">${pageState.referrer || '直接访问'}</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">页面可见性</div>
+          <div class="state-value">${pageState.visibility}</div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">滚动位置</div>
+          <div class="state-value">X: ${pageState.scrollPosition.x}, Y: ${pageState.scrollPosition.y}</div>
+        </div>
+      `;
+    }
+
+    // 渲染环境信息
+    function renderEnvironment(env) {
+      const container = document.getElementById('environmentInfo');
+
+      container.innerHTML = Object.entries(env).map(([key, value]) => `
+        <li class="env-item">
+          <span class="env-key">${key}:</span>
+          <span class="env-value">${value}</span>
+        </li>
+      `).join('');
+    }
+
+    // 初始化页面
+    function initPage() {
+      const data = mockErrorData;
+
+      // 更新头部信息
+      document.getElementById('errorTitle').textContent = data.message;
+      document.getElementById('errorId').textContent = data.errorId;
+      document.getElementById('errorType').textContent = data.subType.toUpperCase() + ' Error';
+      document.getElementById('firstSeen').textContent = formatTime(data.issueStats.firstSeenAt);
+      document.getElementById('lastSeen').textContent = formatTime(data.issueStats.lastSeenAt);
+      document.getElementById('occurrenceCount').textContent = data.issueStats.occurrenceCount + ' 次';
+      document.getElementById('affectedUsers').textContent = data.issueStats.affectedUsers + ' 人';
+
+      // 更新统计信息
+      document.getElementById('statOccurrence').textContent = data.issueStats.occurrenceCount;
+      document.getElementById('statUsers').textContent = data.issueStats.affectedUsers;
+
+      // 渲染各个部分
+      renderBreadcrumbs(data.breadcrumbs);
+      renderStack(data.stack);
+      renderSessionInfo(data.session);
+      renderPageState(data.pageState);
+      renderEnvironment(data.environment);
+    }
+
+    // 复制堆栈
+    function copyStack() {
+      const stack = document.getElementById('stackTrace').textContent;
+      navigator.clipboard.writeText(stack).then(() => {
+        alert('堆栈信息已复制到剪贴板');
+      });
+    }
+
+    // 标记已解决
+    function resolveError() {
+      if (confirm('确定要标记此错误为已解决吗？')) {
+        alert('错误已标记为已解决');
+        // 实际应该调用 API
+      }
+    }
+
+    // 忽略错误
+    function ignoreError() {
+      if (confirm('确定要忽略此错误吗？')) {
+        alert('错误已忽略');
+        // 实际应该调用 API
+      }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>
